@@ -6,7 +6,9 @@
 #
 FROM ruby:2.5.3
 ENV REFRESHED_AT 2018-07-17
+EXPOSE 3000
 
+# disable loomio_onboarding plugin
 RUN gem update --system
 RUN apt-get update -qq && apt-get install -y build-essential sudo apt-utils
 
@@ -23,21 +25,23 @@ RUN apt-get install -y libxml2-dev libxslt1-dev
 RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
+
+# switch to appuser
+RUN groupadd -g 999 appuser && useradd -r -u 999 -g appuser appuser
+USER appuser
+
+ENV DISABLED_PLUGINS loomio_onboarding
+
 # RUN mkdir /loomio
 WORKDIR /loomio
 ADD . /loomio
 COPY config/database.docker.yml /loomio/config/database.yml
 RUN bundle install
 
-# disable loomio_onboarding plugin
-ENV DISABLED_PLUGINS loomio_onboarding
-
 WORKDIR /loomio/client
 RUN npm install
 RUN npm rebuild node-sass
 WORKDIR /loomio
-
-EXPOSE 3000
 
 # source the config file and run puma when the container starts
 CMD /loomio/docker_start.sh
