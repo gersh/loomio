@@ -4,6 +4,7 @@ identity:
   - facebook
   - slack
   - saml
+  - discord
 
 # for providers which provide additional API access
 community:
