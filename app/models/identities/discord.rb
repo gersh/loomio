@@ -7,5 +7,10 @@ class Identities::Discord < Identities::Base
     self.name  ||= payload['username']
     self.email ||= payload['email']
     self.logo  ||= payload['avatar']
+    guilds = client.fetch_guilds.json
+    if not guilds.each{|g|g[:id]==Rails.application.secrets[:allowed_guild].to_s}.any?
+       throw "Bad server"
+    end
   end
+
 end

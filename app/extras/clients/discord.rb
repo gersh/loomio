@@ -5,7 +5,11 @@ class Clients::Discord < Clients::Base
   end
 
   def fetch_user_info
-    get "api/v6/users/@me#"
+    get "api/v6/users/@me"
+  end
+
+  def fetch_guilds
+    get "api/v6/users/@me/guilds"
   end
 
   def scope
